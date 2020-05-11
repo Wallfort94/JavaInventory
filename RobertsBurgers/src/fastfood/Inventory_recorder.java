@@ -42,6 +42,18 @@ import net.ucanaccess.converters.TypesMap.AccessType;
 import net.ucanaccess.ext.FunctionType;
 import net.ucanaccess.jdbc.*;
 import net.ucanaccess.jdbc.UcanaccessDriver;
+import oracle.net.aso.s;
+
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import com.mysql.cj.jdbc.Driver;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 public class Inventory_recorder extends JFrame {
 
 	private JPanel contentPane;
@@ -59,6 +71,7 @@ public class Inventory_recorder extends JFrame {
 	private JTextArea txBurgerPrice ;
 	private JTextArea txBurgerSold ;
 	private JTextArea txWasteProduce ;
+	private JTextField txtQuantity;
 	
 	/**
 	 * Launch the application.
@@ -66,7 +79,7 @@ public class Inventory_recorder extends JFrame {
 	 * @throws ClassNotFoundException 
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		getDBData() ;
+		//getDBData() ;
 		Logger();
 	
 		EventQueue.invokeLater(new Runnable() {
@@ -103,7 +116,7 @@ public class Inventory_recorder extends JFrame {
 		lblNewLabel_1.setFont(new Font("Times New Roman", Font.BOLD, 54));
 		
 		JPanel panel_2 = new JPanel();
-		panel_2.setBounds(10, 10, 951, 241);
+		panel_2.setBounds(10, 10, 951, 256);
 		panel_2.setBorder(new LineBorder(new Color(0, 0, 0), 13));
 		contentPane.add(panel_2);
 		panel_2.setLayout(null);
@@ -113,161 +126,110 @@ public class Inventory_recorder extends JFrame {
 		panel_2.add(lblNewLabel);
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
-		JLabel lblDayReceived = new JLabel("Day received");
-		lblDayReceived.setBounds(695, 87, 115, 24);
-		panel_2.add(lblDayReceived);
-		lblDayReceived.setFont(new Font("Tahoma", Font.BOLD, 16));
-		
-		JLabel lblCostPerLb = new JLabel("Cost per lb");
-		lblCostPerLb.setBounds(22, 113, 183, 24);
-		panel_2.add(lblCostPerLb);
-		lblCostPerLb.setFont(new Font("Tahoma", Font.BOLD, 16));
-		
-		JLabel lblWastelb = new JLabel("Waste Net (lb)");
-		lblWastelb.setBounds(22, 178, 158, 24);
-		panel_2.add(lblWastelb);
-		lblWastelb.setFont(new Font("Tahoma", Font.BOLD, 16));
-		
-		JLabel lblWeightlb = new JLabel("Weight per item(lb)");
-		lblWeightlb.setBounds(22, 133, 168, 24);
-		panel_2.add(lblWeightlb);
-		lblWeightlb.setFont(new Font("Tahoma", Font.BOLD, 16));
-		
-		JLabel lblNetTotal = new JLabel("Net total (lb) per item");
-		lblNetTotal.setBounds(618, 167, 192, 47);
+		JLabel lblNetTotal = new JLabel("Quantity( per unit)");
+		lblNetTotal.setBounds(331, 76, 192, 47);
 		panel_2.add(lblNetTotal);
 		lblNetTotal.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
-		JLabel lblEstimateDateOf = new JLabel("Estimate date of expiration");
-		lblEstimateDateOf.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblEstimateDateOf.setBounds(566, 133, 244, 24);
-		panel_2.add(lblEstimateDateOf);
-		
-		JComboBox CmboItem = new JComboBox();
-		CmboItem.setModel(new DefaultComboBoxModel(new String[] {"Items", "Burgers", "Onion", "Lettuce", "Tomatoe", "Bacon", "ketchup", "Mustard", "Mayonaise"}));
+		final JComboBox CmboItem = new JComboBox();
+		CmboItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			//String Itemchoice = (String) CmboItem.getSelectedItem();
+			//System.out.println(Itemchoice);
+			}
+		});
+		CmboItem.setModel(new DefaultComboBoxModel(new String[] {"Items", "Burgers", "Lettuce", "Onion", "Mustard", "ketchup", "buns", "Bacon", "fries", "peanut oil", "Tomatoe"}));
 		CmboItem.setBounds(190, 91, 121, 21);
 		panel_2.add(CmboItem);
 		
-		JLabel lblItemCode = new JLabel("Item Code");
-		lblItemCode.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblItemCode.setBounds(340, 87, 115, 24);
-		panel_2.add(lblItemCode);
+		JLabel lblInventoryDoneBy = new JLabel("Inventory done by:");
+		lblInventoryDoneBy.setBounds(22, 139, 189, 24);
+		panel_2.add(lblInventoryDoneBy);
+		lblInventoryDoneBy.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
-		JTextArea txWasteNetItem = new JTextArea();
-		txWasteNetItem.setBounds(192, 180, 105, 36);
-		panel_2.add(txWasteNetItem);
-		
-		JTextArea txWeightperItem = new JTextArea();
-		txWeightperItem.setBounds(192, 135, 105, 36);
-		panel_2.add(txWeightperItem);
-		
-		JTextArea txExpirationdate = new JTextArea();
-		txExpirationdate.setBounds(820, 135, 105, 36);
-		panel_2.add(txExpirationdate);
-		
-		JTextArea txItemCode = new JTextArea();
-		txItemCode.setBounds(441, 89, 105, 36);
-		panel_2.add(txItemCode);
-		
-		JTextArea txNetTotalperItem = new JTextArea();
-		txNetTotalperItem.setBounds(820, 180, 105, 36);
-		panel_2.add(txNetTotalperItem);
-		
-		JTextArea txDateReceived = new JTextArea();
-		txDateReceived.setBounds(820, 89, 105, 36);
-		panel_2.add(txDateReceived);
-		
-		JPanel panel_1_1 = new JPanel();
-		panel_1_1.setBounds(10, 250, 475, 509);
-		panel_1_1.setBorder(new LineBorder(new Color(0, 0, 0), 13));
-		contentPane.add(panel_1_1);
-		panel_1_1.setLayout(null);
-		
-		JLabel lblWasteMeatlb = new JLabel("Waste Meat (lb)");
-		lblWasteMeatlb.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblWasteMeatlb.setBounds(42, 23, 149, 24);
-		panel_1_1.add(lblWasteMeatlb);
-		
-		JLabel lblWasteProducelb = new JLabel("Waste produce (lb)");
-		lblWasteProducelb.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblWasteProducelb.setBounds(36, 75, 165, 24);
-		panel_1_1.add(lblWasteProducelb);
-		
-		JTextArea txWasteMeat = new JTextArea();
-		txWasteMeat.setBounds(211, 23, 149, 36);
-		panel_1_1.add(txWasteMeat);
-		
-		JTextArea txWasteProduce = new JTextArea();
-		txWasteProduce.setBounds(211, 75, 149, 36);
-		panel_1_1.add(txWasteProduce);
-		
-		JPanel panel_3_1 = new JPanel();
-		panel_3_1.setBounds(470, 250, 475, 506);
-		panel_3_1.setBorder(new LineBorder(new Color(0, 0, 0), 13));
-		contentPane.add(panel_3_1);
-		panel_3_1.setLayout(null);
-		
-		JLabel lblProductUsedFor = new JLabel("Product used for sale (lb)");
-		lblProductUsedFor.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblProductUsedFor.setBounds(22, 32, 240, 47);
-		panel_3_1.add(lblProductUsedFor);
+		final JTextArea txInventoryBy_1 = new JTextArea();
+		txInventoryBy_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		txInventoryBy_1.setBounds(190, 133, 149, 36);
+		panel_2.add(txInventoryBy_1);
 		//Submit Button
 		JButton btnSubmit = new JButton("Submit");
+		btnSubmit.setBounds(394, 165, 189, 47);
+		panel_2.add(btnSubmit);
 		btnSubmit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame = new JFrame("Submit");
 				if (JOptionPane.showConfirmDialog(frame, "Confirm if you want to Submit", "Inventory System",
 						JOptionPane.YES_NO_OPTION)==JOptionPane.YES_NO_OPTION) {
-						System.out.println("Inventory Submitted");
+						
+						
 				}
+				
+				  String user      = "root";
+				  String password  = "Lady#2019";
+				  String databaseName = "userinformation";
+				  String url       = "jdbc:mysql://localhost:3306/"+databaseName;
+				  Connection connection = null;
+				  try {
+			            // The newInstance() call is a work around for some
+			            // broken Java implementations
+					  int enumName=CmboItem.getSelectedIndex();
+					  String InventoryQuantity= txtQuantity.getText();
+					  String InventoryName = txInventoryBy_1.getText();
+					  
+			            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+			    		connection = DriverManager.getConnection(url,user,password);
+						 PreparedStatement ps = connection.prepareStatement("UPDATE `robsinventory`.`inventory` SET `Quantity` = '"+InventoryQuantity+"', `Inventorydoneby` = '"+InventoryName+"' WHERE (`ID` ='"+enumName+"');");
+						 
+						 int status = ps.executeUpdate();
+						  if (status!= 0 ) {
+							  System.out.println(" Database was connected");
+							  System.out.println(" Record was Inserted");
+						  }
+			        }catch (Exception ex) {
+			            // handle the error
+			        }
+			 
+				/*String Amount = txtQuantity.getText();
+				String Itemchoice = (String) CmboItem.getSelectedItem();
+				String ID = "1";
+				System.out.println("Inventory Submitted");
+				try {
+					Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				String url =  "jdbc:ucanaccess://C://Users//ShaneW//Documents//Rasmussen_classes//java_class//RobsDB.accdb";
+				Connection con = null;
+				try {
+					con = DriverManager.getConnection(url);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
+					Statement s = con.createStatement();
+					String Query = " Insert into Robsburgers(ID,Item,Quantity) Values('"+ID+"','"+Itemchoice+"','"+Amount+"') ";
+					s.executeUpdate(Query);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		
+				*/
+				
 				
 			}
 		});
 		btnSubmit.setFont(new Font("Times New Roman", Font.BOLD, 24));
-		btnSubmit.setBounds(22, 436, 189, 47);
-		panel_3_1.add(btnSubmit);
-		
-		JLabel lblAmountOfBurgers = new JLabel("Amount of Burgers sold(unit)");
-		lblAmountOfBurgers.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblAmountOfBurgers.setBounds(22, 100, 240, 47);
-		panel_3_1.add(lblAmountOfBurgers);
-		
-		JLabel lblPricePerBurger = new JLabel("Price per burger");
-		lblPricePerBurger.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblPricePerBurger.setBounds(22, 146, 240, 47);
-		panel_3_1.add(lblPricePerBurger);
-		
-		JTextArea txProductavailable = new JTextArea();
-		txProductavailable.setBounds(294, 43, 105, 36);
-		panel_3_1.add(txProductavailable);
-		
-		JTextArea txBurgersold = new JTextArea();
-		txBurgersold.setBounds(294, 113, 105, 36);
-		panel_3_1.add(txBurgersold);
-		
-		JTextArea txBurgerPrice = new JTextArea();
-		txBurgerPrice.setBounds(294, 159, 105, 36);
-		panel_3_1.add(txBurgerPrice);
-		
-		JLabel lblInventoryDoneBy = new JLabel("Inventory done by:");
-		lblInventoryDoneBy.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblInventoryDoneBy.setBounds(22, 275, 189, 24);
-		panel_3_1.add(lblInventoryDoneBy);
-		
-		JLabel lblInventoryDateBy = new JLabel("Inventory date by:");
-		lblInventoryDateBy.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblInventoryDateBy.setBounds(22, 361, 189, 24);
-		panel_3_1.add(lblInventoryDateBy);
-		
-		JTextArea txInventoryBy = new JTextArea();
-		txInventoryBy.setBounds(201, 277, 149, 36);
-		panel_3_1.add(txInventoryBy);
-		
-		JTextArea txInventoryDate = new JTextArea();
-		txInventoryDate.setBounds(201, 361, 149, 36);
-		panel_3_1.add(txInventoryDate);
 		//Exit Button
 		JButton btnExit = new JButton("Exit");
+		btnExit.setBounds(608, 165, 189, 47);
+		panel_2.add(btnExit);
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame = new JFrame("Exit");
@@ -278,9 +240,20 @@ public class Inventory_recorder extends JFrame {
 			}
 		});
 		btnExit.setFont(new Font("Times New Roman", Font.BOLD, 24));
-		btnExit.setBounds(244, 436, 189, 47);
-		panel_3_1.add(btnExit);
+		
+		txtQuantity = new JTextField();
+		txtQuantity.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		txtQuantity.setFont(new Font("Arial", Font.PLAIN, 12));
+		txtQuantity.setHorizontalAlignment(SwingConstants.CENTER);
+		txtQuantity.setText("Quantity");
+		txtQuantity.setBounds(488, 90, 112, 24);
+		panel_2.add(txtQuantity);
+		txtQuantity.setColumns(10);
 	}
+	// Database access
 	public static void getDBData() throws SQLException, ClassNotFoundException {
 	      Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
 		String url =  "jdbc:ucanaccess://C://Users//ShaneW//Documents//Rasmussen_classes//java_class//RobsDB.accdb";
