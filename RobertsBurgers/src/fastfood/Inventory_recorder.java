@@ -345,7 +345,7 @@ public class Inventory_recorder extends JFrame {
 			e.printStackTrace();
 		}
 		
-		
+		//hi
 		Logr.log(Level.SEVERE, " My first log");
 		/*
 		 * SEVERE
@@ -360,7 +360,8 @@ public class Inventory_recorder extends JFrame {
 	public static class Test {
 		private final static Logger Logr = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 			static void test() {
-				Logr.info("I'm from a different class");	
+				Logr.info("I'm from a different class this is a test");	
+			
 		}	
 
 	}
