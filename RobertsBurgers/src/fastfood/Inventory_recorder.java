@@ -37,7 +37,7 @@ import java.sql.*;
 import com.healthmarketscience.jackcess.*;
 import com.healthmarketscience.jackcess.util.ImportUtil;
 
-
+import net.proteanit.sql.DbUtils;
 import net.ucanaccess.converters.TypesMap.AccessType;
 import net.ucanaccess.ext.FunctionType;
 import net.ucanaccess.jdbc.*;
@@ -53,6 +53,8 @@ import java.sql.SQLException;
 import com.mysql.cj.jdbc.Driver;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
 
 public class Inventory_recorder extends JFrame {
 
@@ -72,6 +74,7 @@ public class Inventory_recorder extends JFrame {
 	private JTextArea txBurgerSold ;
 	private JTextArea txWasteProduce ;
 	private JTextField txtQuantity;
+	private JTable table;
 	
 	/**
 	 * Launch the application.
@@ -116,7 +119,7 @@ public class Inventory_recorder extends JFrame {
 		lblNewLabel_1.setFont(new Font("Times New Roman", Font.BOLD, 54));
 		
 		JPanel panel_2 = new JPanel();
-		panel_2.setBounds(10, 10, 951, 256);
+		panel_2.setBounds(10, 10, 951, 557);
 		panel_2.setBorder(new LineBorder(new Color(0, 0, 0), 13));
 		contentPane.add(panel_2);
 		panel_2.setLayout(null);
@@ -157,7 +160,7 @@ public class Inventory_recorder extends JFrame {
 		panel_2.add(txInventoryBy_1);
 		//Submit Button
 		JButton btnSubmit = new JButton("Submit");
-		btnSubmit.setBounds(394, 165, 189, 47);
+		btnSubmit.setBounds(200, 179, 189, 47);
 		panel_2.add(btnSubmit);
 		btnSubmit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -228,7 +231,7 @@ public class Inventory_recorder extends JFrame {
 		btnSubmit.setFont(new Font("Times New Roman", Font.BOLD, 24));
 		//Exit Button
 		JButton btnExit = new JButton("Exit");
-		btnExit.setBounds(608, 165, 189, 47);
+		btnExit.setBounds(676, 179, 189, 47);
 		panel_2.add(btnExit);
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -237,6 +240,7 @@ public class Inventory_recorder extends JFrame {
 						JOptionPane.YES_NO_OPTION)==JOptionPane.YES_NO_OPTION) {
 						System.exit(0);
 				}
+				
 			}
 		});
 		btnExit.setFont(new Font("Times New Roman", Font.BOLD, 24));
@@ -252,6 +256,59 @@ public class Inventory_recorder extends JFrame {
 		txtQuantity.setBounds(488, 90, 112, 24);
 		panel_2.add(txtQuantity);
 		txtQuantity.setColumns(10);
+		
+		JButton btnreport = new JButton("Report");
+		btnreport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				  String user      = "root";
+				  String password  = "Lady#2019";
+				  String databaseName = "robsinventory";
+				  String url       = "jdbc:mysql://localhost:3306/"+databaseName;
+				  Connection connection = null;
+				  try {
+			            // The newInstance() call is a work around for some
+			            // broken Java implementations
+					 // int enumName=CmboItem.getSelectedIndex();
+					 // String InventoryQuantity= txtQuantity.getText();
+					 // String InventoryName = txInventoryBy_1.getText();
+					  
+			            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+			    		connection = DriverManager.getConnection(url,user,password);
+			    		String sql = "SELECT*FROM inventory";
+						 PreparedStatement ps = connection.prepareStatement(sql);
+						 
+						 ResultSet rs = ps.executeQuery(sql);
+						 table.setModel(DbUtils.resultSetToTableModel(rs));
+						 while(rs.next())
+							{
+							 
+								//int x=1;
+								
+								//String name =rs.getString(x);
+								//System.out.println(name);
+								//x++;
+								System.out.println(rs.getString(1)+ "\t\t\t" +rs.getString(2)+ "\t\t\t"+
+										rs.getString(3)+"\t\t\t"+ rs.getString(4)+"\t\t\t");
+								
+							}
+				  }catch(Exception e1) {
+					  
+				  }
+				  
+				  
+			}	  
+		
+		});
+		btnreport.setFont(new Font("Times New Roman", Font.BOLD, 24));
+		btnreport.setBounds(441, 179, 189, 47);
+		panel_2.add(btnreport);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(190, 266, 548, 243);
+		panel_2.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
 	}
 	// Database access
 	public static void getDBData() throws SQLException, ClassNotFoundException {
@@ -307,5 +364,4 @@ public class Inventory_recorder extends JFrame {
 		}	
 
 	}
-
 }
